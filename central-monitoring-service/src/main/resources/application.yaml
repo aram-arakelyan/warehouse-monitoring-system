@@ -1,0 +1,21 @@
+server:
+  port: 8082
+
+spring:
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+
+rabbitmq:
+  queue: sensor.data.queue
+
+monitoring:
+  thresholds:
+    temperature: ${MONITORING_TEMPERATURE_THRESHOLD:35}
+    humidity: ${MONITORING_HUMIDITY_THRESHOLD:50}
+
+logging:
+  level:
+    org.springframework.amqp.rabbit.connection: DEBUG

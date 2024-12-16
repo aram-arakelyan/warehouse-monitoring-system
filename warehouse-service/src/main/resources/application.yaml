@@ -1,0 +1,39 @@
+server:
+  port: 8081
+
+spring:
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+    connection-timeout: 5000
+    publisher-confirm-type: correlated
+    template:
+      enabled: true
+      initial-interval: 1000
+      multiplier: 2
+      max-attempts: 5
+      max-interval: 5000
+
+rabbitmq:
+  exchange: warehouse.exchange
+  queue: sensor.data.queue
+  routing-key: sensor.data
+
+udp:
+  temperature-port: 3344
+  humidity-port: 3355
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health
+#  endpoint:
+#    health:
+#      access: unrestricted
+
+logging:
+  level:
+    org.springframework.amqp.rabbit.connection: DEBUG

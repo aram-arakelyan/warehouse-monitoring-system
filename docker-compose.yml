@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"      # RabbitMQ default port
+      - "15672:15672"    # RabbitMQ Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - my_network
+
+  warehouse-service:
+    build:
+      context: ./warehouse-service   # Path to warehouse-service Dockerfile
+      dockerfile: Dockerfile
+    container_name: warehouse-service
+    ports:
+      - "8081:8081" # Application port
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+    depends_on:
+      - rabbitmq
+#      rabbitmq:
+#        condition: service_healthy  # Wait for RabbitMQ to pass its health check
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 3
+    networks:
+      - my_network
+
+  central-monitoring-service:
+    build:
+      context: ./central-monitoring-service  # Path to central-monitoring-service Dockerfile
+      dockerfile: Dockerfile
+    container_name: central-monitoring-service
+    ports:
+      - "8082:8082" # Application port
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+#      - rabbitmq
+#      - warehouse-service
+#      rabbitmq:
+#        condition: service_healthy  # Wait for RabbitMQ to pass its health check
+#      warehouse-service:
+#        condition: service_healthy  # Wait for Warehouse Service to pass its health check
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 3
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
