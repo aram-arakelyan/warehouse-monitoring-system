@@ -9,10 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UdpMessageParserTest {
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     void testParseUdpMessageToSensorData_ValidMessage() {
         String message = "sensor_id=S123;value=45";
@@ -80,7 +76,7 @@ class UdpMessageParserTest {
 
     @Test
     void testParseUdpMessageToSensorData_EmptyMessage() {
-        String message = " "; // Empty message with whitespace
+        String message = " ";
         SensorType sensorType = SensorType.TEMPERATURE;
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
