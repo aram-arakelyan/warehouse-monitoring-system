@@ -17,7 +17,11 @@ public class UdpMessageParser {
      * @param sensorType the type of sensor (e.g., TEMPERATURE, HUMIDITY)
      * @return a SensorData object
      */
-    public static SensorData parseUdpMessageToSensorData(String message, SensorType sensorType) {
+    public SensorData parseUdpMessageToSensorData(String message, SensorType sensorType) {
+        if (message == null || message.trim().isEmpty()) {
+            throw new IllegalArgumentException("Message cannot be null or empty");
+        }
+
         Map<String, String> payload = new HashMap<>();
         String[] parts = message.split(";");
 
@@ -29,9 +33,15 @@ public class UdpMessageParser {
         }
 
         String sensorId = payload.getOrDefault("sensor_id", "unknown");
-        int value = Integer.parseInt(payload.getOrDefault("value", "0"));
-        long timestamp = System.currentTimeMillis();
+        int value;
 
+        try {
+            value = Integer.parseInt(payload.getOrDefault("value", "0"));
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Invalid integer value in message: " + payload.get("value"));
+        }
+
+        long timestamp = System.currentTimeMillis();
         return new SensorData(sensorType, sensorId, value, timestamp);
     }
 }

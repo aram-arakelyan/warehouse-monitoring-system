@@ -25,15 +25,6 @@ udp:
   temperature-port: 3344
   humidity-port: 3355
 
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: health
-#  endpoint:
-#    health:
-#      access: unrestricted
-
 logging:
   level:
     org.springframework.amqp.rabbit.connection: DEBUG

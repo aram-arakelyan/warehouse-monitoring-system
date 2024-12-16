@@ -32,7 +32,6 @@
 #
 ## Define the entry point for the container
 #ENTRYPOINT ["java", "-jar", "warehouse-service.jar"]
-#TODO apt update && apt install -y netcat
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY target/warehouse-service.jar .
